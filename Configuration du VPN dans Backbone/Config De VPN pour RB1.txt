@@ -1,0 +1,88 @@
+enable
+configure terminal
+
+! ========== NETTOYAGE ==========
+no crypto map RB1_MAP
+no access-list 110
+no crypto ipsec transform-set RB1_TRANSFORM
+no crypto ipsec transform-set RB1_TRANSFORM_DES
+
+! ========== ISAKMP/IKE PHASE 1 ==========
+crypto isakmp policy 10
+ encryption 3des
+ hash sha
+ authentication pre-share
+ group 2
+ lifetime 86400
+ exit
+
+crypto isakmp key CLE_PREPARTAGEE_A_REMPLACER address 0.0.0.0 0.0.0.0
+
+! ========== IPSEC TRANSFORM SET ==========
+crypto ipsec transform-set MY_SET esp-3des esp-sha-hmac
+ mode tunnel
+ exit
+
+! ========== ACLs PAR PEER ==========
+! Pour RB2
+access-list 101 permit ip host 128.1.1.1 host 128.2.2.2
+
+! Pour RB3
+access-list 102 permit ip host 128.1.1.1 host 128.3.3.3
+
+! Pour RB4
+access-list 103 permit ip host 128.1.1.1 host 128.4.4.4
+
+! Pour RB5
+access-list 104 permit ip host 128.1.1.1 host 128.5.5.5
+
+! ========== CRYPTO MAP ==========
+crypto map RB1_MAP 10 ipsec-isakmp
+ set peer 128.11.1.2
+ set transform-set MY_SET
+ match address 101
+ exit
+
+crypto map RB1_MAP 20 ipsec-isakmp
+ set peer 128.12.1.2
+ set transform-set MY_SET
+ match address 102
+ exit
+
+crypto map RB1_MAP 30 ipsec-isakmp
+ set peer 128.13.1.2
+ set transform-set MY_SET
+ match address 103
+ exit
+
+crypto map RB1_MAP 40 ipsec-isakmp
+ set peer 128.14.1.2
+ set transform-set MY_SET
+ match address 104
+ exit
+
+! ========== APPLICATION SUR INTERFACES ==========
+interface Serial1/0
+ crypto map RB1_MAP
+ exit
+
+interface Serial1/1
+ crypto map RB1_MAP
+ exit
+
+interface Serial1/2
+ crypto map RB1_MAP
+ exit
+
+interface Serial1/3
+ crypto map RB1_MAP
+ exit
+
+! ========== ROUTES STATIQUES ==========
+ip route 128.2.2.2 255.255.255.255 128.11.1.2
+ip route 128.3.3.3 255.255.255.255 128.12.1.2
+ip route 128.4.4.4 255.255.255.255 128.13.1.2
+ip route 128.5.5.5 255.255.255.255 128.14.1.2
+
+end
+write memory

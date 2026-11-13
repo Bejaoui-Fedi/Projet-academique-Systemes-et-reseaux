@@ -1,0 +1,83 @@
+enable
+configure terminal
+hostname RB5
+no ip domain lookup
+service timestamps debug datetime msec
+service timestamps log datetime msec
+ip cef
+interface Loopback0
+ ip address 128.5.5.5 255.255.255.255
+ no shutdown
+ exit
+interface FastEthernet0/0
+ description CONNEXION-CLOUD-RB5-INTERNET
+ ip address dhcp
+ ip nat outside
+ no shutdown
+ exit
+interface FastEthernet0/1
+ shutdown
+ exit
+interface Serial1/0
+ description RB5 -> RB1
+ ip address 128.14.1.2 255.255.255.252
+ encapsulation ppp
+ ip nat inside
+ no shutdown
+ exit
+interface Serial1/1
+ description RB5 -> RB2
+ ip address 128.23.1.2 255.255.255.252
+ encapsulation ppp
+ ip nat inside
+ no shutdown
+ exit
+interface Serial1/2
+ description RB5 -> RB3
+ ip address 128.32.1.2 255.255.255.252
+ encapsulation ppp
+ ip nat inside
+ no shutdown
+ exit
+interface Serial1/3
+ description RB5 -> RB4
+ ip address 128.41.1.2 255.255.255.252
+ encapsulation ppp
+ ip nat inside
+ no shutdown
+ exit
+router ospf 1
+ router-id 128.5.5.5
+ log-adjacency-changes
+ network 128.5.5.5 0.0.0.0 area 0
+ network 128.14.1.0 0.0.0.3 area 0
+ network 128.23.1.0 0.0.0.3 area 0
+ network 128.32.1.0 0.0.0.3 area 0
+ network 128.41.1.0 0.0.0.3 area 0
+ default-information originate always
+ exit
+ip route 0.0.0.0 0.0.0.0 FastEthernet0/0
+ip nat inside source list 1 interface FastEthernet0/0 overload
+access-list 1 permit 128.0.0.0 0.255.255.255
+access-list 1 permit 203.0.113.0 0.0.0.255
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ exit
+line vty 0 4
+ password MOT_DE_PASSE_A_REMPLACER
+ login
+ exit
+end
+write memory
+
+
+
+
+enable
+configure terminal
+no ip route 0.0.0.0 0.0.0.0 FastEthernet0/0
+ip route 0.0.0.0 0.0.0.0 dhcp
+exit
+write memory

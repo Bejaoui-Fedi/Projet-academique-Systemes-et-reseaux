@@ -1,0 +1,71 @@
+enable
+configure terminal
+hostname RB1
+no ip domain lookup
+service timestamps debug datetime msec
+service timestamps log datetime msec
+ip cef
+interface Loopback0
+ ip address 128.1.1.1 255.255.255.255
+ no shutdown
+ exit
+interface FastEthernet0/0
+ description === CONNEXION to RZ-WEB ===
+ ip address 203.0.113.77 255.255.255.252
+ ip ospf network point-to-point
+ no shutdown
+ exit
+interface FastEthernet0/1
+ shutdown
+ exit
+interface Serial1/0
+ description RB1 -> RB2
+ ip address 128.11.1.1 255.255.255.252
+ encapsulation ppp
+ clock rate 64000
+ no shutdown
+ exit
+interface Serial1/1
+ description RB1 -> RB3 (SERVEUR - RB3 est client!)
+ ip address 128.12.1.1 255.255.255.252
+ encapsulation ppp
+ clock rate 64000
+ no shutdown
+ exit
+interface Serial1/2
+ description RB1 -> RB4
+ ip address 128.13.1.1 255.255.255.252
+ encapsulation ppp
+ clock rate 64000
+ no shutdown
+ exit
+interface Serial1/3
+ description RB1 -> RB5
+ ip address 128.14.1.1 255.255.255.252
+ encapsulation ppp
+ clock rate 64000
+ no shutdown
+ exit
+router ospf 1
+ router-id 128.1.1.1
+ log-adjacency-changes
+ network 128.1.1.1 0.0.0.0 area 0
+ network 128.11.1.0 0.0.0.3 area 0
+ network 128.12.1.0 0.0.0.3 area 0
+ network 128.13.1.0 0.0.0.3 area 0
+ network 128.14.1.0 0.0.0.3 area 0
+ network 203.0.113.76 0.0.0.3 area 0
+ default-information originate
+ exit
+ip route 0.0.0.0 0.0.0.0 128.14.1.2
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ exit
+line vty 0 4
+ password MOT_DE_PASSE_A_REMPLACER
+ login
+ exit
+end
+write memory
