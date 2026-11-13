@@ -8,6 +8,10 @@ Le plan d'adressage est segmenté avec VLSM afin d'utiliser efficacement les adr
 
 Cette simulation met en pratique le routage avancé, la segmentation réseau, l'intégration de services et la sécurisation d'une infrastructure d'entreprise.
 
+## Topologie du réseau
+
+![Topologie du réseau simulé](Typologie.PNG)
+
 ## Ma tâche : conception et configuration du backbone
 
 Ma partie du projet porte sur le cœur backbone, composé de cinq routeurs (RB1 à RB5). Les routeurs sont reliés en maillage complet par des liens série point-à-point. OSPF est configuré dans l'aire 0 pour diffuser les routes et assurer la connectivité entre les routeurs. Chaque routeur possède une interface Loopback utilisée comme identifiant OSPF.
@@ -19,7 +23,7 @@ Le backbone participe également à l'accès externe : RB5 assure la fonction de
 - `Partie Réseaux de Backbone/` : configurations de base des routeurs RB1 à RB5 (interfaces, OSPF, routes par défaut et NAT).
 - `Configuration du VPN dans Backbone/` : configurations IPsec site-à-site associées aux cinq routeurs.
 
-Les dossiers de documentation et l'image `Typologie.PNG` d'origine ne sont pas inclus dans ce dépôt, conformément à la demande.
+Le dossier `Documentation/` d'origine n'est pas inclus dans ce dépôt.
 
 ## Remarque de sécurité
 
